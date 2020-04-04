@@ -1,7 +1,26 @@
+import * as express from 'express';
 import * as socketIO from 'socket.io';
+import * as dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Socket } from 'socket.io';
+import logger from './logger';
+import registerClientMessages from './clientMessages';
 
-const io = socketIO(80);
+dotenv.config();
 
-io.on('connection', () => {
-    console.log('user connected');
+const app = express();
+
+const server = createServer(app);
+const io = socketIO(server);
+
+io.on('connection', (socket: Socket) => {
+  logger.log('user connected');
+
+  registerClientMessages(socket);
+
+  socket.on('disconnect', () => {
+    logger.log('user disconnected');
+  });
 });
+
+server.listen(process.env.PORT || 8080);
