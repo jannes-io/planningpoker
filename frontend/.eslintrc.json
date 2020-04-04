@@ -1,0 +1,26 @@
+{
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "airbnb-typescript"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
+    }
+  },
+  "rules": {
+    "spaced-comment": 0,
+    "no-prototype-builtins": 0,
+    "react/prop-types": 0,
+    "object-curly-newline": 0,
+    "import/no-cycle": 0,
+    "react/jsx-wrap-multilines": 0,
+    "react/jsx-closing-tag-location": 0
+  }
+}
