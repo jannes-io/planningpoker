@@ -17,10 +17,6 @@ io.on('connection', (socket: Socket) => {
   logger.log('user connected');
 
   registerClientMessages(socket);
-
-  socket.on('disconnect', () => {
-    logger.log('user disconnected');
-  });
 });
 
 server.listen(process.env.PORT || 8080);

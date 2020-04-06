@@ -1,8 +1,27 @@
 import React, { useState } from 'react';
-import { Button, createStyles, Grid, makeStyles, TextField, Theme, Typography } from '@material-ui/core';
-import { ArrowForward as JoinIcon, AddBox as CreateIcon } from '@material-ui/icons';
+import {
+  Button,
+  createStyles,
+  Fade,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  InputAdornment,
+  makeStyles,
+  Radio,
+  RadioGroup,
+  TextField,
+  Theme,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
+import { ArrowForward as JoinIcon, AddBox as CreateIcon, Info as InfoIcon } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 import { Redirect } from 'react-router';
+import { socket } from '../App';
+import defaultDecks, { DeckName } from '../decks';
+import { ICreateRoomData } from '../../../backend/src/typesClient';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
@@ -24,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
     marginBottom: theme.spacing(2),
   },
-  roomField: {
+  marginBottom: {
     marginBottom: theme.spacing(1),
   },
 }));
@@ -32,6 +51,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 const RoomSelector: React.FC = () => {
   const [roomId, setRoomId] = useState('');
   const [redirect, setRedirect] = useState(false);
+  const [deck, setDeck] = useState<DeckName>('Scrum');
+  const [customDeck, setCustomDeck] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -44,6 +65,17 @@ const RoomSelector: React.FC = () => {
   };
 
   const handleCreateRoom = () => {
+    const cards = deck === 'Custom'
+      ? customDeck.split(',')
+      : defaultDecks.find(({ name }) => name === deck)?.options;
+
+    if (cards !== undefined) {
+      const createData: ICreateRoomData = { cards };
+      socket.emit('createRoom', createData, (createdRoomId: string) => {
+        setRoomId(createdRoomId);
+        setRedirect(true);
+      });
+    }
   };
 
   if (redirect) {
@@ -57,7 +89,7 @@ const RoomSelector: React.FC = () => {
       </Typography>
       <TextField
         fullWidth
-        className={classes.roomField}
+        className={classes.marginBottom}
         variant="outlined"
         label="Room #"
         value={roomId || ''}
@@ -78,6 +110,35 @@ const RoomSelector: React.FC = () => {
       <Typography variant="h5" className={classes.title}>
         Create a new room
       </Typography>
+      <FormControl>
+        <FormLabel>Deck type</FormLabel>
+        <RadioGroup value={deck} onChange={({ target }) => setDeck(target.value as DeckName)}>
+          {defaultDecks.map(({ name }) => <FormControlLabel
+            key={name}
+            value={name}
+            control={<Radio />}
+            label={name}
+          />)}
+          <FormControlLabel value="Custom" control={<Radio />} label="Custom" />
+        </RadioGroup>
+      </FormControl>
+      <Fade in={deck === 'Custom'}>
+        <TextField
+          fullWidth
+          className={classes.marginBottom}
+          variant="outlined"
+          label="Deck"
+          value={customDeck}
+          onChange={({ target }) => setCustomDeck(target.value)}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">
+              <Tooltip title="Comma separated list of options. Ex: 1,2,3,hello,world">
+                <InfoIcon />
+              </Tooltip>
+            </InputAdornment>,
+          }}
+        />
+      </Fade>
       <Button
         fullWidth
         color="secondary"

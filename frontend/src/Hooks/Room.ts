@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import { IRoom } from '../../../backend/src/types';
+import { IClientRoom } from '../../../backend/src/typesClient';
 import { socket } from '../App';
 
-const useRoom = (roomId: string, displayName?: string) => {
-  const [room, setRoom] = useState<IRoom | null>(null);
+const useRoom = (initialRoomData: IClientRoom) => {
+  const [room, setRoom] = useState<IClientRoom>(initialRoomData);
+
+  const handleRoomUpdate = (newRoom: IClientRoom) => {
+    setRoom(newRoom);
+  };
 
   useEffect(() => {
-    if (displayName === undefined) {
-      return;
-    }
-    socket.emit('joinRoom', { room: roomId, displayName }, setRoom);
-  }, [roomId, displayName]);
+    socket.on('updateRoom', handleRoomUpdate);
+  }, []);
 
   return room;
 };
