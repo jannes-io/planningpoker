@@ -19,9 +19,9 @@ import {
 import { ArrowForward as JoinIcon, AddBox as CreateIcon, Info as InfoIcon } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
 import { Redirect } from 'react-router';
-import { socket } from '../App';
 import defaultDecks, { DeckName } from '../decks';
 import { ICreateRoomData } from '../../../backend/src/typesClient';
+import useSocket from '../Hooks/Socket';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
@@ -54,6 +54,7 @@ const RoomSelector: React.FC = () => {
   const [deck, setDeck] = useState<DeckName>('Scrum');
   const [customDeck, setCustomDeck] = useState('');
   const { enqueueSnackbar } = useSnackbar();
+  const socket = useSocket();
   const classes = useStyles();
 
   const handleJoinRoom = () => {

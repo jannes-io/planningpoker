@@ -1,5 +1,15 @@
 import React from 'react';
-import { Container, createStyles, CssBaseline, Grid, makeStyles, Paper, Theme, Typography } from '@material-ui/core';
+import {
+  Container,
+  createStyles,
+  CssBaseline,
+  Grid,
+  Link,
+  makeStyles,
+  Paper,
+  Theme,
+  Typography,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
@@ -29,7 +39,13 @@ const Layout: React.FC = ({ children }) => {
         <Grid item xs={12}>
           <Typography className={classes.footerText}>
             {'Made with ❤ by '}
-            <a target="_blank" rel="noopener noreferrer" href="https://github.com/jannes-io">Jannes Drijkoningen</a>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.com/jannes-io"
+            >
+              Jannes Drijkoningen
+            </Link>
           </Typography>
         </Grid>
       </Grid>

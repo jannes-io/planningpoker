@@ -2,15 +2,18 @@ import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
-import socketIOClient from 'socket.io-client';
 import RoomSelector from './Components/RoomSelector';
 import Layout from './Components/Layout';
 import RoomJoiner from './Components/RoomJoiner';
 
-const theme = createMuiTheme({
-});
+const isDarkMode = window.matchMedia
+  && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-export const socket = socketIOClient(process.env.REACT_APP_BACKEND_URL || '');
+const theme = createMuiTheme({
+  palette: {
+    type: isDarkMode ? 'dark' : 'light',
+  },
+});
 
 const App: React.FC = () => <MuiThemeProvider theme={theme}>
   <BrowserRouter>

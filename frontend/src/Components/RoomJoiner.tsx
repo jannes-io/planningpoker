@@ -13,9 +13,9 @@ import {
 } from '@material-ui/core';
 import { useParams } from 'react-router';
 import { useSnackbar } from 'notistack';
-import { socket } from '../App';
 import { IClientRoom, IJoinRoomData, PlayerType } from '../../../backend/src/typesClient';
 import Room from './Room';
+import useSocket from '../Hooks/Socket';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
@@ -40,6 +40,7 @@ const RoomJoiner = () => {
   const [initialRoomData, setInitialRoomData] = useState<IClientRoom>();
   const { enqueueSnackbar } = useSnackbar();
   const { id: roomId } = useParams<{ id: string }>();
+  const socket = useSocket();
   const classes = useStyles();
 
   const handleJoinRoom = () => {
@@ -47,7 +48,7 @@ const RoomJoiner = () => {
       enqueueSnackbar('Your display name can not be empty!', { variant: 'error' });
     } else {
       const joinData: IJoinRoomData = {
-        room: roomId,
+        roomId,
         displayName,
         playerType,
       };
@@ -89,7 +90,7 @@ const RoomJoiner = () => {
         variant="contained"
         onClick={handleJoinRoom}
       >
-        Let&amp;s go!
+        let me in!
       </Button>
     </Grid>
   </Grid>;

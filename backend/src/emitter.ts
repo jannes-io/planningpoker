@@ -1,6 +1,8 @@
 import * as R from 'ramda';
-import { IServerRoom } from './types';
+import { Socket } from 'socket.io';
+import { IServerRoom, IServerUser } from './types';
 import { IClientRoom, IRevealedCard } from './typesClient';
+import appState from './state';
 
 export const transformRoom = (room: IServerRoom): IClientRoom => ({
   ...room,
@@ -13,6 +15,20 @@ const sendRoomUpdate = (room: IServerRoom) => {
   });
 };
 
+const sendUserDisconnected = (socket: Socket) => {
+  const findBySocket = (user: IServerUser) => user.socket.id === socket.id;
+  const userRoom = appState.rooms.find(({ users }) => users.find(findBySocket));
+
+  if (userRoom !== undefined) {
+    userRoom.users = R.reject(findBySocket, userRoom.users);
+    if (userRoom.users.length > 0) {
+      sendRoomUpdate(userRoom);
+    } else if (process.env.ENV !== 'dev') {
+      appState.rooms = appState.rooms.filter((room) => room.id !== userRoom.id);
+    }
+  }
+};
+
 const sendRevealedCards = (room: IServerRoom) => {
   const revealedCards: IRevealedCard[] = room.users
     .filter(R.propEq('type', 'player'))
@@ -23,7 +39,15 @@ const sendRevealedCards = (room: IServerRoom) => {
   });
 };
 
+const sendClearAllCards = (room: IServerRoom) => {
+  room.users.forEach(({ socket }) => {
+    socket.emit('clearAllCards');
+  });
+};
+
 export default {
   sendRoomUpdate,
   sendRevealedCards,
+  sendClearAllCards,
+  sendUserDisconnected,
 };

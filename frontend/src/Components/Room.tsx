@@ -1,39 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as R from 'ramda';
 import {
+  Button,
   createStyles,
   Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   makeStyles,
-  Paper,
   Theme,
-  Typography,
 } from '@material-ui/core';
 import {
-  HowToReg as PlayerIcon,
-  Person as SpectatorIcon,
-  Done as HasCardIcon,
-  MoreHoriz as HasNoCardIcon,
+  FileCopy as CopyIcon,
+  Clear as ClearIcon,
 } from '@material-ui/icons';
-import { IClientRoom } from '../../../backend/src/typesClient';
-import useRoom from '../Hooks/Room';
+import { useSnackbar } from 'notistack';
+import { IClientRoom, IRevealedCard } from '../../../backend/src/typesClient';
+import useSocket from '../Hooks/Socket';
+import Card from './Card';
+import UserList from './UserList';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  paper: {
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: theme.spacing(25),
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#f1f1f1',
-      WebkitBoxShadow: '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
-      MozBoxShadow: '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
+  buttonWrapper: {
+    '& button': {
+      marginRight: theme.spacing(1),
     },
   },
 }));
@@ -44,47 +31,81 @@ interface IRoomProps {
 }
 
 const Room: React.FC<IRoomProps> = ({ initialRoom, displayName }) => {
-  const room = useRoom(initialRoom);
+  const [room, setRoom] = useState<IClientRoom>(initialRoom);
+  const [visibleCards, setVisibleCards] = useState<IRevealedCard[]>();
+  const { enqueueSnackbar } = useSnackbar();
+  const socket = useSocket();
   const classes = useStyles();
+
   const self = room.users.find(R.propEq('displayName', displayName))!;
 
+  useEffect(() => {
+    socket.on('updateRoom', setRoom);
+    socket.on('revealCards', setVisibleCards);
+    socket.on('clearAllCards', () => setVisibleCards(undefined));
+  }, [socket]);
+
+  const handlePlayCard = (card: string) => {
+    if (visibleCards === undefined) {
+      socket.emit('playCard', { roomId: room.id, card });
+    }
+  };
+
+  const url = window.location.href;
+  const copyUrlToClipboard = () => {
+    const elem = document.createElement('textarea');
+    elem.value = url;
+    document.body.appendChild(elem);
+    elem.select();
+    document.execCommand('copy');
+    document.body.removeChild(elem);
+    enqueueSnackbar('Invite link copied to clipboard!', { variant: 'success' });
+  };
+
   return <Grid container spacing={2}>
-    <Grid item xs={12}>
-      <p>
-        You are in room
-        {` ${room.id}`}
-      </p>
+    <Grid item xs={12} className={classes.buttonWrapper}>
+      <Button
+        variant="outlined"
+        startIcon={<CopyIcon />}
+        onClick={copyUrlToClipboard}
+      >
+        Copy invite link
+      </Button>
+      <Button
+        variant="contained"
+        color="secondary"
+        startIcon={<ClearIcon />}
+        onClick={() => socket.emit('clearAllCards', { roomId: room.id })}
+      >
+        Reset all cards
+      </Button>
     </Grid>
     <Grid item xs={12} md={5}>
-      <List>
-        {room.users.map((user) => <ListItem key={user.id}>
-          <ListItemIcon>
-            {user.type === 'player' ? <PlayerIcon /> : <SpectatorIcon />}
-          </ListItemIcon>
-          <ListItemText>
-            {user.displayName}
-          </ListItemText>
-          {user.type === 'player'
-            ? <ListItemIcon>
-              {user.selectedCard === undefined ? <HasNoCardIcon /> : <HasCardIcon />}
-            </ListItemIcon>
-            : null}
-        </ListItem>)}
-      </List>
+      <UserList users={room.users} />
     </Grid>
     <Grid item xs={12} md={7}>
-      Results:
+      <Grid container spacing={1}>
+        {visibleCards === undefined
+          ? room.users
+            .filter(R.prop('hasCardSelected'))
+            .map(({ id }) => <Card key={id} wide card="X" />)
+          : visibleCards
+            .map(({ userId, selectedCard }) => <Card
+              key={userId}
+              wide
+              label={room.users.find(R.propEq('id', userId))?.displayName}
+              card={selectedCard}
+            />)}
+      </Grid>
     </Grid>
     {self.type === 'player'
       ? <Grid item xs={12}>
         <Grid container spacing={1}>
-          {room.cards.map((card) => <Grid item xs={6} sm={4} md={2} key={card}>
-            <Paper variant="outlined" elevation={3} className={classes.paper}>
-              <Typography variant="h4">
-                {card}
-              </Typography>
-            </Paper>
-          </Grid>)}
+          {room.cards.map((card) => <Card
+            key={card}
+            card={card}
+            onSelectCard={handlePlayCard}
+          />)}
         </Grid>
       </Grid>
       : null}

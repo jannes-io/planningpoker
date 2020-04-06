@@ -1,10 +1,8 @@
 import { Socket } from 'socket.io';
-import * as R from 'ramda';
 import roomHandlers from './Handler/roomHandler';
 import logger from './logger';
 import appState from './state';
 import emitter from './emitter';
-import { IServerUser } from './types';
 import gameHandlers from './Handler/gameHandler';
 
 interface IClientMessage {
@@ -31,7 +29,9 @@ const clientMessages: IClientMessage[] = [{
 
 const messageWrapper = (handler: Function, socket: Socket) => (...args: any[]) => {
   handler(socket, ...args);
-  logger.log(appState);
+  if (process.env.ENV === 'dev') {
+    logger.log(appState);
+  }
 };
 
 const registerClientMessages = (socket: Socket) => {
@@ -40,17 +40,7 @@ const registerClientMessages = (socket: Socket) => {
   });
 
   socket.on('disconnect', () => {
-    const findBySocket = (user: IServerUser) => user.socket.id === socket.id;
-    const userRoom = appState.rooms.find(({ users }) => users.find(findBySocket));
-    if (userRoom !== undefined) {
-      userRoom.users = R.reject(findBySocket, userRoom.users);
-      if (userRoom.users.length > 0) {
-        emitter.sendRoomUpdate(userRoom);
-      } else {
-        appState.rooms = appState.rooms.filter((room) => room.id !== userRoom.id);
-      }
-    }
-
+    emitter.sendUserDisconnected(socket);
     logger.log('user disconnected');
   });
 };
