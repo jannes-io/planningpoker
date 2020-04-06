@@ -42,7 +42,7 @@ const Card: React.FC<ICardProps> = ({ card, wide, label, onSelectCard }) => {
       <Typography variant="h4">
         {card}
       </Typography>
-      {label !== undefined ? <Typography>{label}</Typography> : null}
+      {label !== undefined ? <Typography align="center">{label}</Typography> : null}
     </Paper>
   </SizedGrid>;
 };
