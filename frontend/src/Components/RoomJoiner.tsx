@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import { useParams } from 'react-router';
 import { useSnackbar } from 'notistack';
-import { IClientRoom, IJoinRoomData, PlayerType } from '../../../backend/src/typesClient';
+import { IClientRoom, IJoinRoomData, PlayerType } from '../types';
 import Room from './Room';
 import useSocket from '../Hooks/Socket';
 

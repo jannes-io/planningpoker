@@ -23,7 +23,7 @@ const sendUserDisconnected = (socket: Socket) => {
     userRoom.users = R.reject(findBySocket, userRoom.users);
     if (userRoom.users.length > 0) {
       sendRoomUpdate(userRoom);
-    } else if (process.env.BACKEND_ENV !== 'dev') {
+    } else if (process.env.ENV !== 'dev') {
       appState.rooms = appState.rooms.filter((room) => room.id !== userRoom.id);
     }
   }

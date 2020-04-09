@@ -12,7 +12,7 @@ import {
   Clear as ClearIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
-import { IClientRoom, IRevealedCard } from '../../../backend/src/typesClient';
+import { IClientRoom, IRevealedCard } from '../types';
 import useSocket from '../Hooks/Socket';
 import Card from './Card';
 import UserList from './UserList';

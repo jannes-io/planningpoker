@@ -20,7 +20,7 @@ import { ArrowForward as JoinIcon, AddBox as CreateIcon, Info as InfoIcon } from
 import { useSnackbar } from 'notistack';
 import { Redirect } from 'react-router';
 import defaultDecks, { DeckName } from '../decks';
-import { ICreateRoomData } from '../../../backend/src/typesClient';
+import { ICreateRoomData } from '../types';
 import useSocket from '../Hooks/Socket';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

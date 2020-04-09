@@ -6,7 +6,7 @@ import {
   MoreHoriz as HasNoCardIcon,
   Person as SpectatorIcon,
 } from '@material-ui/icons';
-import { IUser } from '../../../backend/src/typesClient';
+import { IUser } from '../types';
 
 const UserList: React.FC<{ users: IUser[] }> = ({ users }) => <List>
   {users.map((user) => <ListItem key={user.id}>

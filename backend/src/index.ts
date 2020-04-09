@@ -20,4 +20,4 @@ io.on('connection', (socket: Socket) => {
   registerClientMessages(socket);
 });
 
-server.listen(process.env.BACKEND_PORT || 8080);
+server.listen(process.env.PORT || 8080);
