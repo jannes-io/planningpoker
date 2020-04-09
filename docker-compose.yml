@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  planningspoker:
+    build: .
+    container_name: "planningpoker"
+    ports:
+      - "${FRONTEND_PORT}:80"
+      - "${BACKEND_PORT}:8080"
+    environment:
+      - ENV=prod
+      - REACT_APP_BACKEND_URL=${BACKEND_URL}
