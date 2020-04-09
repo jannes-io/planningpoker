@@ -9,6 +9,7 @@ import registerClientMessages from './clientMessages';
 dotenv.config();
 
 const app = express();
+app.use(express.static('public'));
 
 const server = createServer(app);
 const io = socketIO(server);
@@ -19,4 +20,4 @@ io.on('connection', (socket: Socket) => {
   registerClientMessages(socket);
 });
 
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.BACKEND_PORT || 8080);

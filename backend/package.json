@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "watch-ts": "tsc -w",
-    "watch-node": "nodemon dist/server.js",
+    "watch-node": "nodemon dist/index.js",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript, Node\" -c \"yello.bold, cyan.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
     "lint": "eslint ./src/**/*",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/ramda": "^0.27.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ramda": "^0.27.0",
@@ -22,6 +21,7 @@
     "uniqid": "^5.2.0"
   },
   "devDependencies": {
+    "@types/ramda": "^0.27.3",
     "@types/express": "^4.17.4",
     "@types/socket.io": "^2.1.4",
     "@types/uniqid": "^4.1.3",

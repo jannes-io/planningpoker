@@ -29,7 +29,7 @@ const clientMessages: IClientMessage[] = [{
 
 const messageWrapper = (handler: Function, socket: Socket) => (...args: any[]) => {
   handler(socket, ...args);
-  if (process.env.ENV === 'dev') {
+  if (process.env.BACKEND_ENV === 'dev') {
     logger.log(appState);
   }
 };
