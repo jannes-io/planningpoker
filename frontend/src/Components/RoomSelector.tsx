@@ -54,7 +54,7 @@ const RoomSelector: React.FC = () => {
   const [deck, setDeck] = useState<DeckName>('Scrum');
   const [customDeck, setCustomDeck] = useState('');
   const { enqueueSnackbar } = useSnackbar();
-  const socket = useSocket();
+  const { socket } = useSocket();
   const classes = useStyles();
 
   const handleJoinRoom = () => {

@@ -40,7 +40,7 @@ const RoomJoiner = () => {
   const [initialRoomData, setInitialRoomData] = useState<IClientRoom>();
   const { enqueueSnackbar } = useSnackbar();
   const { id: roomId } = useParams<{ id: string }>();
-  const socket = useSocket();
+  const { socket, clientId } = useSocket();
   const classes = useStyles();
 
   const handleJoinRoom = () => {
@@ -49,6 +49,7 @@ const RoomJoiner = () => {
     } else {
       const joinData: IJoinRoomData = {
         roomId,
+        clientId,
         displayName,
         playerType,
       };

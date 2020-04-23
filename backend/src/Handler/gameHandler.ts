@@ -17,9 +17,14 @@ const playCard = (socket: Socket, data: IPlayCardData) => {
   user.hasCardSelected = true;
   emitter.sendRoomUpdate(room);
 
-  const playerCount = room.users.filter(R.propEq('type', 'player')).length;
-  const selectedCardCount = room.users.filter(R.prop('hasCardSelected')).length;
-  if (playerCount === selectedCardCount) {
+  const connectedPlayers = room.users
+    .filter(R.prop('connected'))
+    .filter(R.propEq('type', 'player'));
+
+  const playersWithCards = connectedPlayers
+    .filter(R.prop('hasCardSelected'));
+
+  if (connectedPlayers.length === playersWithCards.length) {
     emitter.sendRevealedCards(room);
   }
 };

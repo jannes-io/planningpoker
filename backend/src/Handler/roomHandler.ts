@@ -9,7 +9,7 @@ import emitter, { transformRoom } from '../emitter';
 
 const createRoom = (_: Socket, { cards }: ICreateRoomData, acknowledge: Function) => {
   const room: IServerRoom = {
-    id: uniqid(),
+    id: process.env.ENV === 'dev' ? 'dev' : uniqid(),
     users: [],
     cards,
   };
@@ -21,7 +21,7 @@ const createRoom = (_: Socket, { cards }: ICreateRoomData, acknowledge: Function
 };
 
 const joinRoom = (socket: Socket, data: IJoinRoomData, acknowledge: Function) => {
-  const { roomId, displayName, playerType } = data;
+  const { roomId, clientId, displayName, playerType } = data;
   const room = appState.rooms.find(R.propEq('id', roomId));
 
   if (room === undefined) {
@@ -32,9 +32,11 @@ const joinRoom = (socket: Socket, data: IJoinRoomData, acknowledge: Function) =>
   room.users.push({
     id: socket.id,
     socket,
+    clientId,
     displayName,
     type: playerType,
     hasCardSelected: false,
+    connected: true,
   });
 
   emitter.sendRoomUpdate(room);

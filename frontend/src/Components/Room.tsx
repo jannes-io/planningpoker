@@ -12,7 +12,7 @@ import {
   Clear as ClearIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
-import { IClientRoom, IRevealedCard } from '../types';
+import { IClientRoom, IPlayCardData, IRevealedCard } from '../types';
 import useSocket from '../Hooks/Socket';
 import Card from './Card';
 import UserList from './UserList';
@@ -34,7 +34,7 @@ const Room: React.FC<IRoomProps> = ({ initialRoom, displayName }) => {
   const [room, setRoom] = useState<IClientRoom>(initialRoom);
   const [visibleCards, setVisibleCards] = useState<IRevealedCard[]>();
   const { enqueueSnackbar } = useSnackbar();
-  const socket = useSocket();
+  const { socket } = useSocket();
   const classes = useStyles();
 
   const self = room.users.find(R.propEq('displayName', displayName))!;
@@ -47,7 +47,8 @@ const Room: React.FC<IRoomProps> = ({ initialRoom, displayName }) => {
 
   const handlePlayCard = (card: string) => {
     if (visibleCards === undefined) {
-      socket.emit('playCard', { roomId: room.id, card });
+      const data: IPlayCardData = { roomId: room.id, card };
+      socket.emit('playCard', data);
     }
   };
 

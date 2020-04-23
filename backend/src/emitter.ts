@@ -39,6 +39,7 @@ const sendUserDisconnected = (socket: Socket) => {
 
 const sendRevealedCards = (room: IServerRoom) => {
   const revealedCards: IRevealedCard[] = room.users
+    .filter(R.prop('connected'))
     .filter(R.propEq('type', 'player'))
     .map(({ id, selectedCard }) => ({ userId: id, selectedCard }));
 

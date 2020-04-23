@@ -28,6 +28,7 @@ export interface ICreateRoomData {
 
 export interface IJoinRoomData {
   roomId: string;
+  clientId: string;
   displayName: string;
   playerType: PlayerType;
 }

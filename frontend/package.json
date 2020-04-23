@@ -16,6 +16,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router": "^5.1.3",
     "@types/react-router-dom": "^5.1.3",
+    "@types/uniqid": "^4.1.3",
     "ac-react-core": "^0.1.2",
     "notistack": "^0.9.7",
     "ramda": "^0.26.1",
@@ -24,7 +25,8 @@
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.0",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.0",
+    "uniqid": "^5.2.0"
   },
   "devDependencies": {
     "@types/socket.io-client": "^1.4.32",
