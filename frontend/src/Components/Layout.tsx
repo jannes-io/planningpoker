@@ -10,6 +10,7 @@ import {
   Theme,
   Typography,
 } from '@material-ui/core';
+import DisconnectAlert from './DisconnectAlert';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
@@ -27,6 +28,7 @@ const Layout: React.FC = ({ children }) => {
 
   return <>
     <CssBaseline />
+    <DisconnectAlert />
     <Container maxWidth="md">
       <Grid container spacing={3}>
         <Grid item xs={12}>
