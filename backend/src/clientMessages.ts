@@ -39,6 +39,11 @@ const registerClientMessages = (socket: Socket) => {
     socket.on(msg, messageWrapper(handler, socket));
   });
 
+  socket.on('reconnect', () => {
+    emitter.sendUserReconnected(socket);
+    logger.log('user reconnected');
+  });
+
   socket.on('disconnect', () => {
     emitter.sendUserDisconnected(socket);
     logger.log('user disconnected');

@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 import { Socket } from 'socket.io';
-import { IServerRoom, IServerUser } from './types';
+import { IServerRoom } from './types';
 import { IClientRoom, IRevealedCard } from './typesClient';
-import appState from './state';
+import appState, { findGameInfoBySocket } from './state';
 
 export const transformRoom = (room: IServerRoom): IClientRoom => ({
   ...room,
@@ -15,16 +15,24 @@ const sendRoomUpdate = (room: IServerRoom) => {
   });
 };
 
-const sendUserDisconnected = (socket: Socket) => {
-  const findBySocket = (user: IServerUser) => user.socket.id === socket.id;
-  const userRoom = appState.rooms.find(({ users }) => users.find(findBySocket));
+const sendUserReconnected = (socket: Socket) => {
+  const gameInfo = findGameInfoBySocket(socket);
+  if (gameInfo !== undefined) {
+    gameInfo.user.connected = true;
+    sendRoomUpdate(gameInfo.room);
+  }
+};
 
-  if (userRoom !== undefined) {
-    userRoom.users = R.reject(findBySocket, userRoom.users);
-    if (userRoom.users.length > 0) {
-      sendRoomUpdate(userRoom);
-    } else if (process.env.ENV !== 'dev') {
-      appState.rooms = appState.rooms.filter((room) => room.id !== userRoom.id);
+const sendUserDisconnected = (socket: Socket) => {
+  const gameInfo = findGameInfoBySocket(socket);
+  if (gameInfo !== undefined) {
+    gameInfo.user.connected = false;
+
+    const connectedUsers = gameInfo.room.users.filter(R.prop('connected'));
+    if (connectedUsers.length === 0) {
+      appState.rooms = appState.rooms.filter((room) => room.id !== gameInfo.room.id);
+    } else {
+      sendRoomUpdate(gameInfo.room);
     }
   }
 };
@@ -49,5 +57,6 @@ export default {
   sendRoomUpdate,
   sendRevealedCards,
   sendClearAllCards,
+  sendUserReconnected,
   sendUserDisconnected,
 };

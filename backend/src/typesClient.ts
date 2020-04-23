@@ -5,6 +5,7 @@ export interface IUser {
   displayName: string;
   type: PlayerType;
   hasCardSelected: boolean;
+  connected: boolean;
 }
 
 export interface IRevealedCard {
