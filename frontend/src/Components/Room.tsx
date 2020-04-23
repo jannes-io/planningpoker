@@ -12,7 +12,7 @@ import {
   Clear as ClearIcon,
 } from '@material-ui/icons';
 import { useSnackbar } from 'notistack';
-import { IClientRoom, IPlayCardData, IRevealedCard } from '../types';
+import { IClearCardData, IClientRoom, IPlayCardData, IRevealedCard } from '../types';
 import useSocket from '../Hooks/Socket';
 import Card from './Card';
 import UserList from './UserList';
@@ -27,17 +27,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 interface IRoomProps {
   initialRoom: IClientRoom;
-  displayName: string;
 }
 
-const Room: React.FC<IRoomProps> = ({ initialRoom, displayName }) => {
+const Room: React.FC<IRoomProps> = ({ initialRoom }) => {
   const [room, setRoom] = useState<IClientRoom>(initialRoom);
   const [visibleCards, setVisibleCards] = useState<IRevealedCard[]>();
+  const [ownCard, setOwnCard] = useState<string>();
   const { enqueueSnackbar } = useSnackbar();
-  const { socket } = useSocket();
+  const { socket, clientId } = useSocket();
   const classes = useStyles();
 
-  const self = room.users.find(R.propEq('displayName', displayName))!;
+  const self = room.users.find(R.propEq('clientId', clientId))!;
 
   useEffect(() => {
     socket.on('updateRoom', setRoom);
@@ -49,6 +49,17 @@ const Room: React.FC<IRoomProps> = ({ initialRoom, displayName }) => {
     if (visibleCards === undefined) {
       const data: IPlayCardData = { roomId: room.id, card };
       socket.emit('playCard', data);
+      setOwnCard(card);
+    }
+  };
+
+  const handleRemoveCard = () => {
+    if (visibleCards === undefined) {
+      const data: IClearCardData = {
+        roomId: room.id,
+      };
+      socket.emit('clearCard', data);
+      setOwnCard(undefined);
     }
   };
 
@@ -89,11 +100,16 @@ const Room: React.FC<IRoomProps> = ({ initialRoom, displayName }) => {
         {visibleCards === undefined
           ? room.users
             .filter(R.prop('hasCardSelected'))
-            .map(({ id }) => <Card key={id} wide card="X" />)
+            .map(({ id }) => <Card
+              wide
+              key={id}
+              card={id === self.id && ownCard !== undefined ? ownCard : 'X'}
+              onSelectCard={id === self.id && ownCard !== undefined ? handleRemoveCard : undefined}
+            />)
           : visibleCards
             .map(({ userId, selectedCard }) => <Card
-              key={userId}
               wide
+              key={userId}
               label={room.users.find(R.propEq('id', userId))?.displayName}
               card={selectedCard}
             />)}

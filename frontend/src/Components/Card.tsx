@@ -9,6 +9,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: theme.spacing(25),
+  },
+  clickable: {
     cursor: 'pointer',
     '&:hover': {
       background: theme.palette.type === 'dark' ? '#353535' : '#f1f1f1',
@@ -36,7 +38,7 @@ const Card: React.FC<ICardProps> = ({ card, wide, label, onSelectCard }) => {
     <Paper
       variant="outlined"
       elevation={3}
-      className={classes.paper}
+      className={onSelectCard === undefined ? classes.paper : `${classes.paper} ${classes.clickable}`}
       onClick={() => onSelectCard !== undefined && onSelectCard(card)}
     >
       <Typography variant="h4">

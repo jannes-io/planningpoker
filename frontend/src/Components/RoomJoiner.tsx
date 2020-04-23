@@ -58,7 +58,7 @@ const RoomJoiner = () => {
   };
 
   if (initialRoomData !== undefined) {
-    return <Room displayName={displayName} initialRoom={initialRoomData} />;
+    return <Room initialRoom={initialRoomData} />;
   }
 
   return <Grid container className={classes.container} spacing={2}>

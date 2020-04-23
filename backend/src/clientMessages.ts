@@ -3,7 +3,7 @@ import * as util from 'util';
 import * as R from 'ramda';
 import roomHandlers from './Handler/roomHandler';
 import logger from './logger';
-import appState from './state';
+import appState, { findGameInfoBySocket } from './state';
 import emitter from './emitter';
 import gameHandlers from './Handler/gameHandler';
 
@@ -60,6 +60,13 @@ const registerClientMessages = (socket: Socket) => {
 
   socket.on('disconnect', () => {
     emitter.sendUserDisconnected(socket);
+    setTimeout(() => {
+      const gameInfo = findGameInfoBySocket(socket);
+      if (gameInfo !== undefined) {
+        gameInfo.room.users = gameInfo.room.users.filter((user) => user.socket.id !== socket.id);
+        emitter.sendRoomUpdate(gameInfo.room);
+      }
+    }, 5 * 60 * 1000);
     logger.log(`client ${clientId} disconnected`);
   });
 };

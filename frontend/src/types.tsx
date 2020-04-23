@@ -4,6 +4,7 @@ export interface IUser {
   id?: string;
   displayName: string;
   type: PlayerType;
+  connected: boolean;
   hasCardSelected: boolean;
 }
 
