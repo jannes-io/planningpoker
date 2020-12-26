@@ -40,7 +40,7 @@ const RoomJoiner = () => {
   const [initialRoomData, setInitialRoomData] = useState<IClientRoom>();
   const { enqueueSnackbar } = useSnackbar();
   const { id: roomId } = useParams<{ id: string }>();
-  const socket = useSocket();
+  const { socket, clientId } = useSocket();
   const classes = useStyles();
 
   const handleJoinRoom = () => {
@@ -49,6 +49,7 @@ const RoomJoiner = () => {
     } else {
       const joinData: IJoinRoomData = {
         roomId,
+        clientId,
         displayName,
         playerType,
       };
@@ -57,7 +58,7 @@ const RoomJoiner = () => {
   };
 
   if (initialRoomData !== undefined) {
-    return <Room displayName={displayName} initialRoom={initialRoomData} />;
+    return <Room initialRoom={initialRoomData} />;
   }
 
   return <Grid container className={classes.container} spacing={2}>

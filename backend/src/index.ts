@@ -2,8 +2,6 @@ import * as express from 'express';
 import * as socketIO from 'socket.io';
 import * as dotenv from 'dotenv';
 import { createServer } from 'http';
-import { Socket } from 'socket.io';
-import logger from './logger';
 import registerClientMessages from './clientMessages';
 
 dotenv.config();
@@ -14,10 +12,6 @@ app.use(express.static('public'));
 const server = createServer(app);
 const io = socketIO(server);
 
-io.on('connection', (socket: Socket) => {
-  logger.log('user connected');
-
-  registerClientMessages(socket);
-});
+io.on('connection', registerClientMessages);
 
 server.listen(process.env.PORT || 8080);

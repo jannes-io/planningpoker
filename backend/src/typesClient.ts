@@ -5,6 +5,7 @@ export interface IUser {
   displayName: string;
   type: PlayerType;
   hasCardSelected: boolean;
+  connected: boolean;
 }
 
 export interface IRevealedCard {
@@ -27,6 +28,7 @@ export interface ICreateRoomData {
 
 export interface IJoinRoomData {
   roomId: string;
+  clientId: string;
   displayName: string;
   playerType: PlayerType;
 }

@@ -3,6 +3,7 @@ import { IRoom, IUser } from './typesClient';
 
 export interface IServerUser extends IUser {
   socket: Socket;
+  clientId: string;
   selectedCard?: string;
 }
 
