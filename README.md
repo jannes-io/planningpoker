@@ -2,6 +2,8 @@
 
 A remote planning poker application with multiple and customisable card decks.
 
+[Live version](https://poker.jannes.io)
+
 ![License](https://img.shields.io/badge/license-CC%20(Apache)-yellow)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-blue)](https://www.typescriptlang.org/) 
 [![Code Style](https://img.shields.io/badge/code%20style-airbnb-FF5A5F?logo=airbnb)](https://github.com/airbnb/javascript)
